@@ -16,7 +16,7 @@ import java.util.Date;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
+    Integer id;
     String name;
     String description;
     String brand;
@@ -24,8 +24,8 @@ public class Product {
     String category;
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern="dd-mm-yyyy")
     Date releaseDate;
-    boolean productAvailable;
-    int stockQuantity;
+    Boolean productAvailable;
+    Integer stockQuantity;
     String imageName;
     String imageType;
     @Lob
