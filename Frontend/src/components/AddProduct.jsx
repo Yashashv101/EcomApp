@@ -63,7 +63,6 @@ const AddProduct = () => {
     };
 
     return (
-
         <div className="container">
             <div className="center-container">
                 <form className="row g-3 pt-5" onSubmit={submitHandler}>

@@ -3,6 +3,7 @@ package com.yash.springecom.controller;
 import com.yash.springecom.model.Product;
 import com.yash.springecom.repo.ProductRepo;
 import com.yash.springecom.service.ProductService;
+import lombok.Data;
 import org.hibernate.annotations.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -56,6 +57,18 @@ public class ProductController {
 
         Product saved = service.addProduct(product, imageFile);
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/product/{id}")
+    public ResponseEntity<String> updateProduct(@PathVariable int id, @RequestPart("product") Product product,@RequestPart("imageFile") MultipartFile imageFile){
+        Product updatedProduct=null;
+        try{
+            updatedProduct=service.updateProduct(product,imageFile);
+            return new ResponseEntity<>("Updated", HttpStatus.OK);
+        }catch(IOException e){
+            return new ResponseEntity<>("Failed to Update",HttpStatus.BAD_REQUEST);
+        }
+
     }
 
 }

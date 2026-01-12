@@ -3,7 +3,7 @@ import { useContext, useEffect } from "react";
 import { useState } from "react";
 import AppContext from "../Context/Context";
 import axios from "../axios";
-// import UpdateProduct from "./UpdateProduct";
+import UpdateProduct from "./UpdateProduct";
 const Product = () => {
   const { id } = useParams();
   const { data, addToCart, removeFromCart, cart, refreshData } =
