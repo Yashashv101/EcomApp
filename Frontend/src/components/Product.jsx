@@ -102,10 +102,10 @@ const Product = () => {
               </h6>
               <p className="release-date">
                 <h6>Product listed on:</h6>
-                <i> {new Date(product.releaseDate).toLocaleDateString()}</i>
+                <i>{product.releaseDate || "N/A"}</i>
               </p>
             </div>
-            {/* <div className="update-button ">
+            <div className="update-button ">
             <button
               className="btn btn-primary"
               type="button"
@@ -121,7 +121,7 @@ const Product = () => {
             >
               Delete
             </button>
-          </div> */}
+          </div>
           </div>
         </div>
       </>
