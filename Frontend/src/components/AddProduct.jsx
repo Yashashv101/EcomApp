@@ -32,11 +32,14 @@ const AddProduct = () => {
         }
         const productData = {
             ...product,
-            price: product.price ? parseFloat(product.price) : 0,
-            stockQuantity: product.stockQuantity && product.stockQuantity.trim() !== '' ? parseInt(product.stockQuantity) : 0,
-            releaseDate: product.releaseDate ? new Date(product.releaseDate).toISOString().split('T')[0] : null
+            price: parseFloat(product.price),
+            stockQuantity: parseInt(product.stockQuantity),
+            releaseDate: new Date(product.releaseDate)
+                .toISOString()
+                .split('T')[0]
         };
-        
+
+
         const formData = new FormData();
         formData.append("imageFile", image);
         formData.append(

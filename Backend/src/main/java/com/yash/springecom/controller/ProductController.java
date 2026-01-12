@@ -28,13 +28,28 @@ public class ProductController {
 
     @GetMapping("/product/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable int id){
-        Product p=service.getProductById(id);
-        if(p!=null) return new ResponseEntity<>(p,HttpStatus.ACCEPTED);
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        try {
+            Product p = service.getProductById(id);
+            if(p != null) {
+                return new ResponseEntity<>(p, HttpStatus.OK);
+            }
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    @PostMapping(value = "product", consumes = "multipart/form-data")
-    public ResponseEntity<?> addProduct(
+    @GetMapping("product/{productId}/image")
+    public ResponseEntity<byte[]> getImageByProductId(@PathVariable int productId){
+       Product p=service.getProductById(productId);
+       return new ResponseEntity<>(p.getImageData(), HttpStatus.OK);
+    }
+
+    @PostMapping(
+            value = "/product",
+            consumes = "multipart/form-data"
+    )
+    public ResponseEntity<Product> addProduct(
             @RequestPart("product") Product product,
             @RequestPart("imageFile") MultipartFile imageFile
     ) throws IOException {

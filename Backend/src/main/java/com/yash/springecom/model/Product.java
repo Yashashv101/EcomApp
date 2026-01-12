@@ -1,6 +1,7 @@
 package com.yash.springecom.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,12 +23,15 @@ public class Product {
     String brand;
     BigDecimal price;
     String category;
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern="dd-mm-yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern="dd-MM-yyyy")
     Date releaseDate;
     Boolean productAvailable;
     Integer stockQuantity;
     String imageName;
     String imageType;
     @Lob
-    byte[] imageData;
+    @JsonIgnore
+    @Basic(fetch = FetchType.EAGER)
+    private byte[] imageData;
+
 }
