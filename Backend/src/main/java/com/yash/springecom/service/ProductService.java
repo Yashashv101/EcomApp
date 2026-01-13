@@ -40,4 +40,8 @@ public class ProductService {
             product.setImageData(imageFile.getBytes());
             return productRepo.save(product);
     }
+
+    public void deletProductById(int id) {
+        productRepo.deleteById(id);
+    }
 }

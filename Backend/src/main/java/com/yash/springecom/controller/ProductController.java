@@ -23,15 +23,15 @@ public class ProductController {
     ProductService service;
 
     @GetMapping("products")
-    public ResponseEntity<List<Product>> getProducts(){
+    public ResponseEntity<List<Product>> getProducts() {
         return new ResponseEntity<>(service.getProduct(), HttpStatus.OK);
     }
 
     @GetMapping("/product/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable int id){
+    public ResponseEntity<Product> getProductById(@PathVariable int id) {
         try {
             Product p = service.getProductById(id);
-            if(p != null) {
+            if (p != null) {
                 return new ResponseEntity<>(p, HttpStatus.OK);
             }
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -41,9 +41,9 @@ public class ProductController {
     }
 
     @GetMapping("product/{productId}/image")
-    public ResponseEntity<byte[]> getImageByProductId(@PathVariable int productId){
-       Product p=service.getProductById(productId);
-       return new ResponseEntity<>(p.getImageData(), HttpStatus.OK);
+    public ResponseEntity<byte[]> getImageByProductId(@PathVariable int productId) {
+        Product p = service.getProductById(productId);
+        return new ResponseEntity<>(p.getImageData(), HttpStatus.OK);
     }
 
     @PostMapping(
@@ -60,15 +60,23 @@ public class ProductController {
     }
 
     @PutMapping("/product/{id}")
-    public ResponseEntity<String> updateProduct(@PathVariable int id, @RequestPart("product") Product product,@RequestPart("imageFile") MultipartFile imageFile){
-        Product updatedProduct=null;
-        try{
-            updatedProduct=service.updateProduct(product,imageFile);
+    public ResponseEntity<String> updateProduct(@PathVariable int id, @RequestPart("product") Product product, @RequestPart("imageFile") MultipartFile imageFile) {
+        Product updatedProduct = null;
+        try {
+            updatedProduct = service.updateProduct(product, imageFile);
             return new ResponseEntity<>("Updated", HttpStatus.OK);
-        }catch(IOException e){
-            return new ResponseEntity<>("Failed to Update",HttpStatus.BAD_REQUEST);
+        } catch (IOException e) {
+            return new ResponseEntity<>("Failed to Update", HttpStatus.BAD_REQUEST);
         }
-
     }
 
+    @DeleteMapping("/product/{id}")
+    public ResponseEntity<String> deleteProduct(@PathVariable int id) {
+        try {
+            service.deletProductById(id);
+            return new ResponseEntity<>("Deleted", HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Failed to Delete", HttpStatus.BAD_REQUEST);
+        }
+    }
 }
