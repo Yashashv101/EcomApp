@@ -9,14 +9,13 @@ const AppContext = createContext({
   removeFromCart: (productId) => {},
   refreshData:() =>{},
   updateStockQuantity: (productId, newQuantity) =>{}
-
 });
 
 export const AppProvider = ({ children }) => {
   const [data, setData] = useState([]);
   const [isError, setIsError] = useState("");
   const [cart, setCart] = useState(JSON.parse(localStorage.getItem('cart')) || []);
-
+  const baseUrl = import.meta.env.VITE_BASE_URL;
 
   const addToCart = (product) => {
     const existingProductIndex = cart.findIndex((item) => item.id === product.id);
@@ -45,7 +44,7 @@ export const AppProvider = ({ children }) => {
 
   const refreshData = async () => {
     try {
-      const response = await axios.get("/products");
+      const response = await axios.get(`${baseUrl}/api/products`);
       setData(response.data);
     } catch (error) {
       setIsError(error.message);
