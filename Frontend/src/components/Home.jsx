@@ -8,6 +8,8 @@ const Home = ({ selectedCategory }) => {
     const [isDataFetched, setIsDataFetched] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const [toastProduct, setToastProduct] = useState(null);
+    const [imageMap, setImageMap] = useState({});
+
 
     useEffect(() => {
         if (!isDataFetched) {
@@ -30,23 +32,28 @@ const Home = ({ selectedCategory }) => {
         return () => clearTimeout(toastTimer);
     }, [showToast]);
 
-    // Function to convert base64 string to data URL
-    const convertBase64ToDataURL = (base64String, mimeType = 'image/jpeg') => {
-        if (!base64String) return unplugged; // Return fallback image if no data
+    useEffect(() => {
+        const fetchImages = async () => {
+            const newMap = {};
 
-        // If it's already a data URL, return as is
-        if (base64String.startsWith('data:')) {
-            return base64String;
+            for (const product of data) {
+                try {
+                    const res = await fetch(
+                        `http://localhost:8080/api/product/${product.id}/image`
+                    );
+                    const blob = await res.blob();
+                    newMap[product.id] = URL.createObjectURL(blob);
+                } catch {
+                    newMap[product.id] = unplugged;
+                }
+            }
+            setImageMap(newMap);
+        };
+        if (data && data.length > 0) {
+            fetchImages();
         }
+    }, [data]);
 
-        // If it's already a URL, return as is
-        if (base64String.startsWith('http')) {
-            return base64String;
-        }
-
-        // Convert base64 string to data URL
-        return `data:${mimeType};base64,${base64String}`;
-    };
 
     const handleAddToCart = (e, product) => {
         e.preventDefault();
@@ -93,15 +100,16 @@ const Home = ({ selectedCategory }) => {
                         {toastProduct && (
                             <div className="d-flex align-items-center">
                                 <img
-                                    src={convertBase64ToDataURL(toastProduct.imageData)}
+                                    src={imageMap[toastProduct.id] || unplugged}
                                     alt={toastProduct.name}
                                     className="me-2 rounded"
                                     width="40"
                                     height="40"
                                     onError={(e) => {
-                                        e.target.src = unplugged; // Fallback image
+                                        e.target.src = unplugged;
                                     }}
                                 />
+
                                 <div>
                                     <div className="fw-bold">{toastProduct.name}</div>
                                     <small>Successfully added to your cart!</small>
@@ -127,7 +135,7 @@ const Home = ({ selectedCategory }) => {
                                     <div className={`card h-100 shadow-sm ${!productAvailable ? 'bg-light' : ''}`}>
                                         <Link to={`/product/${id}`} className="text-decoration-none text-dark">
                                             <img
-                                                src={convertBase64ToDataURL(imageData)}
+                                                src={imageMap[id] || unplugged}
                                                 alt={name}
                                                 className="card-img-top p-2"
                                                 style={{ height: "150px", objectFit: "cover" }}

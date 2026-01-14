@@ -11,7 +11,7 @@ const Cart = () => {
     const [cartImage, setCartImage] = useState([]);
     const [showModal, setShowModal] = useState(false);
 
-    const baseUrl = import.meta.env.VITE_BASE_URL;
+    const baseUrl = "http://localhost:8080";
 
     useEffect(() => {
         const fetchImagesAndUpdateCart = async () => {
@@ -73,23 +73,6 @@ const Cart = () => {
         const newCartItems = cartItems.filter((item) => item.id !== itemId);
         setCartItems(newCartItems);
     };
-    const convertBase64ToDataURL = (base64String, mimeType = 'image/jpeg') => {
-        // ✅ Fallback image if base64String is empty or undefined
-        const fallbackImage = "/fallback-image.jpg"; // make sure this image exists in your public folder
-
-        if (!base64String) return fallbackImage;
-
-        if (base64String.startsWith("data:")) {
-            return base64String;
-        }
-
-        if (base64String.startsWith("http")) {
-            return base64String;
-        }
-
-        return `data:${mimeType};base64,${base64String}`;
-    };
-
     const handleCheckout = async () => {
         try {
             for (const item of cartItems) {
@@ -161,12 +144,14 @@ const Cart = () => {
                                                     <td>
                                                         <div className="d-flex align-items-center">
                                                             <img
-                                                                src={convertBase64ToDataURL(item.imageData)}
+                                                                src={`http://localhost:8080/api/product/${item.id}/image`}
                                                                 alt={item.name}
-                                                                className="rounded me-3"
                                                                 width="80"
                                                                 height="80"
                                                                 style={{ objectFit: "cover" }}
+                                                                onError={(e) => {
+                                                                    e.currentTarget.src = unplugged;
+                                                                }}
                                                             />
                                                             <div>
                                                                 <h6 className="mb-0">{item.name}</h6>

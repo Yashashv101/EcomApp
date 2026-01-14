@@ -59,11 +59,12 @@ public class ProductController {
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 
-    @PutMapping("/product/{id}")
-    public ResponseEntity<String> updateProduct(@PathVariable int id, @RequestPart("product") Product product, @RequestPart("imageFile") MultipartFile imageFile) {
+    @PutMapping( value = "/product/{id}",
+            consumes = "multipart/form-data")
+    public ResponseEntity<String> updateProduct(@PathVariable int id, @RequestPart("product") Product product, @RequestPart(value = "imageFile", required = false) MultipartFile imageFile) {
         Product updatedProduct = null;
         try {
-            updatedProduct = service.updateProduct(product, imageFile);
+            updatedProduct = service.updateProduct(id, product, imageFile);
             return new ResponseEntity<>("Updated", HttpStatus.OK);
         } catch (IOException e) {
             return new ResponseEntity<>("Failed to Update", HttpStatus.BAD_REQUEST);

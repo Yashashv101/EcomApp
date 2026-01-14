@@ -11,13 +11,13 @@ const Product = () => {
     const [product, setProduct] = useState(null);
     const [imageUrl, setImageUrl] = useState("");
     const navigate = useNavigate();
-    const baseUrl = import.meta.env.VITE_BASE_URL;
+    const baseUrl = "http://localhost:8080";
 
     useEffect(() => {
         const fetchProduct = async () => {
             try {
                 const response = await axios.get(
-                    `${baseUrl}/api/product/${id}`
+                    `http://localhost:8080/api/product/${id}`
                 );
                 setProduct(response.data);
                 console.log(response.data);
@@ -31,7 +31,7 @@ const Product = () => {
 
         const fetchImage = async () => {
             const response = await axios.get(
-                `${baseUrl}/api/product/${id}/image`,
+                `http://localhost:8080/api/product/${id}/image`,
                 { responseType: "blob" }
             );
             setImageUrl(URL.createObjectURL(response.data));
@@ -41,7 +41,7 @@ const Product = () => {
 
     const deleteProduct = async () => {
         try {
-            await axios.delete(`${baseUrl}/api/product/${id}`);
+            await axios.delete(`http://localhost:8080/api/product/${id}`);
             removeFromCart(id);
             console.log("Product deleted successfully");
             toast.success("Product deleted successfully");

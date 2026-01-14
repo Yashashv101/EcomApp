@@ -2,9 +2,10 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { Modal, Button, Form, Alert, Toast, ToastContainer } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import unplugged from "../assets/unplugged.png";
 
 const CheckoutPopup = ({ show, handleClose, cartItems, totalPrice }) => {
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const baseUrl = "http://localhost:8080";
   const navigate = useNavigate();
 
   const [name, setName] = useState('');
@@ -62,22 +63,6 @@ const CheckoutPopup = ({ show, handleClose, cartItems, totalPrice }) => {
       setIsSubmitting(false);
     }
   };
-  const convertBase64ToDataURL = (base64String, mimeType = 'image/jpeg') => {
-    if (!base64String) return unplugged; // Return fallback image if no data
-
-    // If it's already a data URL, return as is
-    if (base64String.startsWith('data:')) {
-      return base64String;
-    }
-
-    // If it's already a URL, return as is
-    if (base64String.startsWith('http')) {
-      return base64String;
-    }
-
-    // Convert base64 string to data URL
-    return `data:${mimeType};base64,${base64String}`;
-  };
   return (
       <>
         <Modal show={show} onHide={handleClose} centered>
@@ -90,11 +75,15 @@ const CheckoutPopup = ({ show, handleClose, cartItems, totalPrice }) => {
                 {cartItems.map((item) => (
                     <div key={item.id} className="d-flex mb-3 border-bottom pb-3">
                       <img
-                          src={convertBase64ToDataURL(item.imageData)}
+                          src={`http://localhost:8080/api/product/${item.id}/image`}
                           alt={item.name}
+                          onError={(e) => {
+                            e.target.src = unplugged;
+                          }}
                           className="me-3 rounded"
                           style={{ width: '80px', height: '80px', objectFit: 'cover' }}
                       />
+
                       <div className="flex-grow-1">
                         <h6 className="mb-1">{item.name}</h6>
                         <p className="mb-1 small">Quantity: {item.quantity}</p>

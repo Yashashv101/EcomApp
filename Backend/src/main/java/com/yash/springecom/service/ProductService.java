@@ -34,11 +34,23 @@ public class ProductService {
         return productRepo.save(product);
     }
 
-    public Product updateProduct(Product product, MultipartFile imageFile) throws IOException{
-            product.setImageName(imageFile.getOriginalFilename());
-            product.setImageType(imageFile.getContentType());
-            product.setImageData(imageFile.getBytes());
-            return productRepo.save(product);
+    @Transactional
+    public Product updateProduct(int id, Product product, MultipartFile imageFile) throws IOException{
+        Product prod=productRepo.findProductById(id);
+        prod.setName(product.getName());
+        prod.setDescription(product.getDescription());
+        prod.setBrand(product.getBrand());
+        prod.setPrice(product.getPrice());
+        prod.setCategory(product.getCategory());
+        prod.setReleaseDate(product.getReleaseDate());
+        prod.setProductAvailable(product.getProductAvailable());
+        prod.setStockQuantity(product.getStockQuantity());
+        if (imageFile != null && !imageFile.isEmpty()) {
+            prod.setImageName(imageFile.getOriginalFilename());
+            prod.setImageType(imageFile.getContentType());
+            prod.setImageData(imageFile.getBytes());
+        }
+        return productRepo.save(prod);
     }
 
     public void deletProductById(int id) {

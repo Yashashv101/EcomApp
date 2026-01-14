@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 
 const Order = () => {
-    const baseUrl = import.meta.env.VITE_BASE_URL;
+    const baseUrl = "http://localhost:8080";
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -12,6 +12,9 @@ const Order = () => {
         const fetchOrders = async () => {
             try {
                 const response = await axios.get(`${baseUrl}/api/orders`);
+                if(!response){
+                    console.log("Error fetching orders: ", response);
+                }
                 setOrders(response.data);
                 setLoading(false);
             } catch (error) {

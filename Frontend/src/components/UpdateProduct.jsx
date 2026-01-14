@@ -24,14 +24,16 @@ const UpdateProduct = () => {
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
 
-
-    const baseUrl = import.meta.env.VITE_BASE_URL;
+    const converUrlToFile = async(blobData, fileName) => {
+        const file = new File([blobData], fileName, { type: blobData.type });
+        return file;
+    }
 
     useEffect(() => {
         const fetchProduct = async () => {
             try {
                 const response = await axios.get(
-                    `${baseUrl}/api/product/${id}`
+                    `http://localhost:8080/api/product/${id}`
                 );
 
                 setProduct(response.data);
@@ -39,7 +41,7 @@ const UpdateProduct = () => {
                 console.log(response.data,'update product response')
 
                 const responseImage = await axios.get(
-                    `${baseUrl}/api/product/${id}/image`,
+                    `http://localhost:8080/api/product/${id}/image`,
                     { responseType: "blob" }
                 );
                 const imageFile = await converUrlToFile(responseImage.data,response.data.imageName)
@@ -59,11 +61,6 @@ const UpdateProduct = () => {
 
 
     const navigate = useNavigate();
-
-    const converUrlToFile = async(blobData, fileName) => {
-        const file = new File([blobData], fileName, { type: blobData.type });
-        return file;
-    }
 
     const handleSubmit = async(e) => {
         setLoading(true);
@@ -86,7 +83,7 @@ const UpdateProduct = () => {
 
         console.log("formData : ", updatedProduct)
         axios
-            .put(`${baseUrl}/api/product/${id}`, updatedProduct, {
+            .put(`http://localhost:8080/api/product/${id}`, updatedProduct, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
