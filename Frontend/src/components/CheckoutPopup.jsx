@@ -55,11 +55,13 @@ const CheckoutPopup = ({ show, handleClose, cartItems, totalPrice }) => {
         navigate('/');
       }, 2000);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setToastVariant('danger');
       setToastMessage('Failed to place order. Please try again.');
       setShowToast(true);
-    } finally {
+      handleClose();
+    }
+    finally {
       setIsSubmitting(false);
     }
   };
