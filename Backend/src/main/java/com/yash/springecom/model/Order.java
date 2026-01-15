@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,11 +15,13 @@ import java.util.List;
 @AllArgsConstructor
 public class Order {
     @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     Long Id;
     @Column(unique=true)
-    String orderID;
+    String orderId;
     String customerName;
     String email;
+    String status;
     LocalDate orderDate;
     @OneToMany(mappedBy="order", cascade=CascadeType.ALL)
     List<OrderItem> items;

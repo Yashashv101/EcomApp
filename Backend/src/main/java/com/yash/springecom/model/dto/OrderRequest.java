@@ -2,5 +2,5 @@ package com.yash.springecom.model.dto;
 
 import java.util.List;
 
-public record OrderRequest(String customerName, String email, List<OrderItemResponse> items) {
+public record OrderRequest(String customerName, String email, List<OrderItemRequest> items) {
 }
