@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+import axios from "../axios";
 import { toast } from "react-toastify";
 
 const UpdateProduct = () => {
@@ -24,7 +24,7 @@ const UpdateProduct = () => {
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
 
-    const converUrlToFile = async(blobData, fileName) => {
+    const converUrlToFile = async (blobData, fileName) => {
         const file = new File([blobData], fileName, { type: blobData.type });
         return file;
     }
@@ -38,13 +38,13 @@ const UpdateProduct = () => {
 
                 setProduct(response.data);
 
-                console.log(response.data,'update product response')
+                console.log(response.data, 'update product response')
 
                 const responseImage = await axios.get(
                     `http://localhost:8080/api/product/${id}/image`,
                     { responseType: "blob" }
                 );
-                const imageFile = await converUrlToFile(responseImage.data,response.data.imageName)
+                const imageFile = await converUrlToFile(responseImage.data, response.data.imageName)
                 setImage(imageFile);
                 setUpdateProduct(response.data);
             } catch (error) {
@@ -62,7 +62,7 @@ const UpdateProduct = () => {
 
     const navigate = useNavigate();
 
-    const handleSubmit = async(e) => {
+    const handleSubmit = async (e) => {
         setLoading(true);
         e.preventDefault();
         console.log("images", image)
@@ -94,13 +94,13 @@ const UpdateProduct = () => {
             })
             .catch((error) => {
                 console.error("Error updating product:", error);
-                console.log("product unsuccessfull update",updateProduct)
+                console.log("product unsuccessfull update", updateProduct)
                 toast.error("Failed to update product. Please try again.");
-            }).finally(()=>{
+            }).finally(() => {
                 setLoading(false)
                 navigate('/')
             }
-        );
+            );
     };
 
 
@@ -249,7 +249,7 @@ const UpdateProduct = () => {
                                     <input
                                         type="date"
                                         className={`form-control ${validated && errors.releaseDate ? 'is-invalid' : ''}`}
-                                        value={updateProduct.releaseDate ? updateProduct.releaseDate.slice(0,10) : ''}
+                                        value={updateProduct.releaseDate ? updateProduct.releaseDate.slice(0, 10) : ''}
                                         name="releaseDate"
                                         onChange={handleChange}
                                         id="releaseDate"

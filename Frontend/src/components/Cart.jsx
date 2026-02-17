@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import AppContext from "../Context/Context";
-import axios from "axios";
+import axios from "../axios";
 import CheckoutPopup from "./CheckoutPopup";
 import { Button } from 'react-bootstrap';
 
@@ -130,71 +130,71 @@ const Cart = () => {
                                     <div className="table-responsive">
                                         <table className="table table-hover align-middle">
                                             <thead>
-                                            <tr>
-                                                <th>Product</th>
-                                                <th>Price</th>
-                                                <th>Quantity</th>
-                                                <th>Total</th>
-                                                <th>Action</th>
-                                            </tr>
+                                                <tr>
+                                                    <th>Product</th>
+                                                    <th>Price</th>
+                                                    <th>Quantity</th>
+                                                    <th>Total</th>
+                                                    <th>Action</th>
+                                                </tr>
                                             </thead>
                                             <tbody>
-                                            {cartItems.map((item) => (
-                                                <tr key={item.id}>
-                                                    <td>
-                                                        <div className="d-flex align-items-center">
-                                                            <img
-                                                                src={`http://localhost:8080/api/product/${item.id}/image`}
-                                                                alt={item.name}
-                                                                width="80"
-                                                                height="80"
-                                                                style={{ objectFit: "cover" }}
-                                                                onError={(e) => {
-                                                                    e.currentTarget.src = unplugged;
-                                                                }}
-                                                            />
-                                                            <div>
-                                                                <h6 className="mb-0">{item.name}</h6>
-                                                                <small className="text-muted">{item.brand}</small>
+                                                {cartItems.map((item) => (
+                                                    <tr key={item.id}>
+                                                        <td>
+                                                            <div className="d-flex align-items-center">
+                                                                <img
+                                                                    src={`http://localhost:8080/api/product/${item.id}/image`}
+                                                                    alt={item.name}
+                                                                    width="80"
+                                                                    height="80"
+                                                                    style={{ objectFit: "cover" }}
+                                                                    onError={(e) => {
+                                                                        e.currentTarget.src = unplugged;
+                                                                    }}
+                                                                />
+                                                                <div>
+                                                                    <h6 className="mb-0">{item.name}</h6>
+                                                                    <small className="text-muted">{item.brand}</small>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>₹ {item.price}</td>
-                                                    <td>
-                                                        <div className="input-group input-group-sm" style={{ width: "120px" }}>
+                                                        </td>
+                                                        <td>₹ {item.price}</td>
+                                                        <td>
+                                                            <div className="input-group input-group-sm" style={{ width: "120px" }}>
+                                                                <button
+                                                                    className="btn btn-outline-secondary"
+                                                                    type="button"
+                                                                    onClick={() => handleDecreaseQuantity(item.id)}
+                                                                >
+                                                                    <i className="bi bi-dash"></i>
+                                                                </button>
+                                                                <input
+                                                                    type="text"
+                                                                    className="form-control text-center"
+                                                                    value={item.quantity}
+                                                                    readOnly
+                                                                />
+                                                                <button
+                                                                    className="btn btn-outline-secondary"
+                                                                    type="button"
+                                                                    onClick={() => handleIncreaseQuantity(item.id)}
+                                                                >
+                                                                    <i className="bi bi-plus"></i>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                        <td className="fw-bold">₹ {(item.price * item.quantity).toFixed(2)}</td>
+                                                        <td>
                                                             <button
-                                                                className="btn btn-outline-secondary"
-                                                                type="button"
-                                                                onClick={() => handleDecreaseQuantity(item.id)}
+                                                                className="btn btn-sm btn-outline-danger"
+                                                                onClick={() => handleRemoveFromCart(item.id)}
                                                             >
-                                                                <i className="bi bi-dash"></i>
+                                                                <i className="bi bi-trash"></i>
                                                             </button>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control text-center"
-                                                                value={item.quantity}
-                                                                readOnly
-                                                            />
-                                                            <button
-                                                                className="btn btn-outline-secondary"
-                                                                type="button"
-                                                                onClick={() => handleIncreaseQuantity(item.id)}
-                                                            >
-                                                                <i className="bi bi-plus"></i>
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                    <td className="fw-bold">₹ {(item.price * item.quantity).toFixed(2)}</td>
-                                                    <td>
-                                                        <button
-                                                            className="btn btn-sm btn-outline-danger"
-                                                            onClick={() => handleRemoveFromCart(item.id)}
-                                                        >
-                                                            <i className="bi bi-trash"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            ))}
+                                                        </td>
+                                                    </tr>
+                                                ))}
                                             </tbody>
                                         </table>
                                     </div>

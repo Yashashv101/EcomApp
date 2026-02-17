@@ -1,10 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AppContext from "../Context/Context";
+import AuthContext from "../Context/AuthContext";
 import unplugged from "../assets/unplugged.png";
 
 const Home = ({ selectedCategory }) => {
     const { data, isError, addToCart, refreshData } = useContext(AppContext);
+    const { isAuthenticated } = useContext(AuthContext);
     const [isDataFetched, setIsDataFetched] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const [toastProduct, setToastProduct] = useState(null);
@@ -151,13 +153,19 @@ const Home = ({ selectedCategory }) => {
                                                     <h5 className="mb-2 fw-bold">
                                                         <i className="bi bi-currency-rupee"></i>{price}
                                                     </h5>
-                                                    <button
-                                                        className="btn btn-primary w-100"
-                                                        onClick={(e) => handleAddToCart(e, product)}
-                                                        disabled={!productAvailable || stockQuantity === 0}
-                                                    >
-                                                        {stockQuantity !== 0 ? "Add to Cart" : "Out of Stock"}
-                                                    </button>
+                                                    {isAuthenticated ? (
+                                                        <button
+                                                            className="btn btn-primary w-100"
+                                                            onClick={(e) => handleAddToCart(e, product)}
+                                                            disabled={!productAvailable || stockQuantity === 0}
+                                                        >
+                                                            {stockQuantity !== 0 ? "Add to Cart" : "Out of Stock"}
+                                                        </button>
+                                                    ) : (
+                                                        <Link to="/login" className="btn btn-outline-primary w-100">
+                                                            Login to Buy
+                                                        </Link>
+                                                    )}
                                                 </div>
                                             </div>
                                         </Link>

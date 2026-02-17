@@ -1,29 +1,34 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import AuthContext from "../Context/AuthContext";
 
 const Navbar = () => {
+  const { user, isAuthenticated, isAdmin, isSeller, logout } =
+    useContext(AuthContext);
+
   const getInitialTheme = () => {
     const storedTheme = localStorage.getItem("theme");
     return storedTheme ? storedTheme : "light-theme";
   };
+
   const [selectedCategory, setSelectedCategory] = useState("");
   const [theme, setTheme] = useState(getInitialTheme());
   const [input, setInput] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [noResults, setNoResults] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
-  const [showSearchResults,setShowSearchResults] = useState(false)
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchData();
   }, []);
 
-  const fetchData = async (value) => {
+  const fetchData = async () => {
     try {
       const response = await axios.get("http://localhost:8080/api/products");
       setSearchResults(response.data);
-      console.log(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -32,14 +37,13 @@ const Navbar = () => {
   const handleChange = async (value) => {
     setInput(value);
     if (value.length >= 1) {
-      setShowSearchResults(true)
+      setShowSearchResults(true);
       try {
         const response = await axios.get(
-            `http://localhost:8080/api/products/search?keyword=${value}`
+          `http://localhost:8080/api/products/search?keyword=${value}`
         );
         setSearchResults(response.data);
         setNoResults(response.data.length === 0);
-        console.log(response.data);
       } catch (error) {
         console.error("Error searching:", error);
       }
@@ -60,96 +64,159 @@ const Navbar = () => {
     document.body.className = theme;
   }, [theme]);
 
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
+
+  const getRoleBadgeColor = (role) => {
+    switch (role) {
+      case "ADMIN":
+        return "bg-danger";
+      case "SELLER":
+        return "bg-warning text-dark";
+      default:
+        return "bg-info";
+    }
+  };
+
   return (
-      <>
-        <header>
-          <nav className="navbar navbar-expand-lg fixed-top">
-            <div className="container-fluid">
-              <a className="navbar-brand" href="https://telusko.com/">
-                EcomApp
-              </a>
-              <button
-                  className="navbar-toggler"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#navbarSupportedContent"
-                  aria-controls="navbarSupportedContent"
-                  aria-expanded="false"
-                  aria-label="Toggle navigation"
-              >
-                <span className="navbar-toggler-icon"></span>
-              </button>
-              <div
-                  className="collapse navbar-collapse"
-                  id="navbarSupportedContent"
-              >
-                <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                  <li className="nav-item">
-                    <a className="nav-link active" aria-current="page" href="/">
-                      Home
-                    </a>
-                  </li>
+    <>
+      <header>
+        <nav className="navbar navbar-expand-lg fixed-top">
+          <div className="container-fluid">
+            <a className="navbar-brand" href="/">
+              EcomApp
+            </a>
+            <button
+              className="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span className="navbar-toggler-icon"></span>
+            </button>
+            <div
+              className="collapse navbar-collapse"
+              id="navbarSupportedContent"
+            >
+              <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                <li className="nav-item">
+                  <a className="nav-link active" aria-current="page" href="/">
+                    Home
+                  </a>
+                </li>
+
+                {/* Show Add Product only for ADMIN and SELLER */}
+                {isAuthenticated && (isAdmin || isSeller) && (
                   <li className="nav-item">
                     <a className="nav-link" href="/add_product">
                       Add Product
                     </a>
                   </li>
+                )}
 
+                {isAuthenticated && (
                   <li className="nav-item">
-                    <a className="nav-link" href="/orders" >
+                    <a className="nav-link" href="/orders">
                       Orders
                     </a>
                   </li>
+                )}
 
-                  <li className="nav-item"></li>
-                </ul>
+                <li className="nav-item"></li>
+              </ul>
 
-                <div className="d-flex align-items-center cart">
+              <div className="d-flex align-items-center cart">
+                {isAuthenticated && (
                   <a href="/cart" className="nav-link text-dark">
                     <i
-                        className="bi bi-cart me-2"
-                        style={{ display: "flex", alignItems: "center" }}
+                      className="bi bi-cart me-2"
+                      style={{ display: "flex", alignItems: "center" }}
                     >
                       Cart
                     </i>
                   </a>
-                  {/* <form className="d-flex" role="search" onSubmit={handleSearch} id="searchForm"> */}
-                  <input
-                      className="form-control me-2"
-                      type="search"
-                      placeholder="Search"
-                      aria-label="Search"
-                      value={input}
-                      onChange={(e) => handleChange(e.target.value)}
-                      onFocus={() => setSearchFocused(true)}
-                      onBlur={() => setSearchFocused(false)}
-                  />
-                  {showSearchResults && (
-                      <ul className="list-group">
-                        {searchResults.length > 0 ? (
-                            searchResults.map((result) => (
-                                <li key={result.id} className="list-group-item">
-                                  <a href={`/product/${result.id}`} className="search-result-link">
-                                    <span>{result.name}</span>
-                                  </a>
-                                </li>
-                            ))
-                        ) : (
-                            noResults && (
-                                <p className="no-results-message">
-                                  No Prouduct with such Name
-                                </p>
-                            )
-                        )}
-                      </ul>
-                  )}
-                  <div />
-                </div>
+                )}
+
+                <input
+                  className="form-control me-2"
+                  type="search"
+                  placeholder="Search"
+                  aria-label="Search"
+                  value={input}
+                  onChange={(e) => handleChange(e.target.value)}
+                  onFocus={() => setSearchFocused(true)}
+                  onBlur={() => setSearchFocused(false)}
+                />
+                {showSearchResults && (
+                  <ul className="list-group">
+                    {searchResults.length > 0 ? (
+                      searchResults.map((result) => (
+                        <li key={result.id} className="list-group-item">
+                          <a
+                            href={`/product/${result.id}`}
+                            className="search-result-link"
+                          >
+                            <span>{result.name}</span>
+                          </a>
+                        </li>
+                      ))
+                    ) : (
+                      noResults && (
+                        <p className="no-results-message">
+                          No Product with such Name
+                        </p>
+                      )
+                    )}
+                  </ul>
+                )}
+
+                {/* Auth Section */}
+                {isAuthenticated ? (
+                  <div className="d-flex align-items-center ms-3">
+                    <span className="me-2 text-nowrap">
+                      <strong>{user.name}</strong>
+                    </span>
+                    <span
+                      className={`badge ${getRoleBadgeColor(user.role)} me-2`}
+                    >
+                      {user.role}
+                    </span>
+                    <button
+                      className="btn btn-outline-danger btn-sm"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </button>
+                  </div>
+                ) : (
+                  <div className="d-flex align-items-center ms-3">
+                    <Link
+                      to="/login"
+                      className="btn btn-outline-primary btn-sm me-2"
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      to="/register"
+                      className="btn btn-primary btn-sm"
+                    >
+                      Register
+                    </Link>
+                  </div>
+                )}
+
+                <div />
               </div>
             </div>
-          </nav>
-        </header>
-      </>
+          </div>
+        </nav>
+      </header>
+    </>
   );
 };
 

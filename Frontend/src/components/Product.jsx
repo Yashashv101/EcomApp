@@ -1,13 +1,15 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { useState } from "react";
 import AppContext from "../Context/Context";
+import AuthContext from "../Context/AuthContext";
 import axios from "../axios";
 import { toast } from "react-toastify";
 
 const Product = () => {
     const { id } = useParams();
     const { data, addToCart, removeFromCart, cart, refreshData } = useContext(AppContext);
+    const { isAuthenticated, isAdmin, isSeller } = useContext(AuthContext);
     const [product, setProduct] = useState(null);
     const [imageUrl, setImageUrl] = useState("");
     const navigate = useNavigate();
@@ -108,13 +110,19 @@ const Product = () => {
                     <h3 className="fw-bold mb-3">₹ {product.price}</h3>
 
                     <div className="d-grid gap-2 mb-3">
-                        <button
-                            className="btn btn-primary btn-lg"
-                            onClick={handlAddToCart}
-                            disabled={!product.productAvailable || product.stockQuantity == 0}
-                        >
-                            {product.stockQuantity !== 0 ? "Add to Cart" : "Out of Stock"}
-                        </button>
+                        {isAuthenticated ? (
+                            <button
+                                className="btn btn-primary btn-lg"
+                                onClick={handlAddToCart}
+                                disabled={!product.productAvailable || product.stockQuantity == 0}
+                            >
+                                {product.stockQuantity !== 0 ? "Add to Cart" : "Out of Stock"}
+                            </button>
+                        ) : (
+                            <Link to="/login" className="btn btn-outline-primary btn-lg">
+                                Login to Buy
+                            </Link>
+                        )}
                     </div>
 
                     <p className="mb-4">
@@ -122,25 +130,27 @@ const Product = () => {
                         <span className="fw-bold text-success">{product.stockQuantity}</span>
                     </p>
 
-                    <div className="d-flex gap-2">
-                        <button
-                            className="btn btn-outline-primary"
-                            type="button"
-                            onClick={handleEditClick}
-                        >
-                            <i className="bi bi-pencil me-1"></i>
-                            Update
-                        </button>
+                    {(isAdmin || isSeller) && (
+                        <div className="d-flex gap-2">
+                            <button
+                                className="btn btn-outline-primary"
+                                type="button"
+                                onClick={handleEditClick}
+                            >
+                                <i className="bi bi-pencil me-1"></i>
+                                Update
+                            </button>
 
-                        <button
-                            className="btn btn-outline-danger"
-                            type="button"
-                            onClick={deleteProduct}
-                        >
-                            <i className="bi bi-trash me-1"></i>
-                            Delete
-                        </button>
-                    </div>
+                            <button
+                                className="btn btn-outline-danger"
+                                type="button"
+                                onClick={deleteProduct}
+                            >
+                                <i className="bi bi-trash me-1"></i>
+                                Delete
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

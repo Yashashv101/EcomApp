@@ -13,7 +13,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin
 public class OrderController{
     @Autowired
     private OrderService service;

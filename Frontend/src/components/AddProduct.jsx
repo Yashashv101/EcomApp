@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axios from "../axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -15,13 +15,13 @@ const AddProduct = () => {
         productAvailable: false,
     });
 
-    const baseUrl = "http://localhost:8080";
     const [image, setImage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [loading, setLoading] = useState(false);
     const [validated, setValidated] = useState(false);
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
+
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -92,7 +92,7 @@ const AddProduct = () => {
         );
 
         axios
-            .post(`${baseUrl}/api/product`, formData, {
+            .post(`/product`, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             })
             .then((response) => {

@@ -6,9 +6,12 @@ import AddProduct from "./components/AddProduct";
 import Product from "./components/Product";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppProvider } from "./Context/Context";
+import { AuthProvider } from "./Context/AuthContext";
 import UpdateProduct from "./components/UpdateProduct";
 import Order from "./components/Order";
-
+import Login from "./components/Login";
+import Register from "./components/Register";
+import ProtectedRoute from "./components/ProtectedRoute";
 import SearchResults from "./components/SearchResults";
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -20,35 +23,62 @@ function App() {
 
     const handleCategorySelect = (category) => {
         setSelectedCategory(category);
-        console.log("Selected category:", category);
     };
 
     return (
-        <AppProvider>
-            <BrowserRouter>
-                <ToastContainer autoClose={2000}
-                                hideProgressBar={true} />
-                <Navbar onSelectCategory={handleCategorySelect} />
-                <div className="min-vh-100 bg-light">
-                    <Routes>
-                        <Route
-                            path="/"
-                            element={
-                                <Home selectedCategory={selectedCategory} />
-                            }
-                        />
-                        <Route path="/add_product" element={<AddProduct />} />
-                        <Route path="/product" element={<Product />} />
-                        <Route path="product/:id" element={<Product />} />
-                        <Route path="/cart" element={<Cart />} />
-                        <Route path="/product/update/:id" element={<UpdateProduct />} />
-                        <Route path="/orders" element={<Order />} />
-                        <Route path="/search-results" element={<SearchResults />} />
-
-                    </Routes>
-                </div>
-            </BrowserRouter>
-        </AppProvider>
+        <AuthProvider>
+            <AppProvider>
+                <BrowserRouter>
+                    <ToastContainer autoClose={2000} hideProgressBar={true} />
+                    <Navbar onSelectCategory={handleCategorySelect} />
+                    <div className="min-vh-100 bg-light">
+                        <Routes>
+                            <Route
+                                path="/"
+                                element={<Home selectedCategory={selectedCategory} />}
+                            />
+                            <Route path="/login" element={<Login />} />
+                            <Route path="/register" element={<Register />} />
+                            <Route
+                                path="/add_product"
+                                element={
+                                    <ProtectedRoute requiredRole={["ADMIN", "SELLER"]}>
+                                        <AddProduct />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route path="/product" element={<Product />} />
+                            <Route path="product/:id" element={<Product />} />
+                            <Route
+                                path="/cart"
+                                element={
+                                    <ProtectedRoute>
+                                        <Cart />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/product/update/:id"
+                                element={
+                                    <ProtectedRoute requiredRole={["ADMIN", "SELLER"]}>
+                                        <UpdateProduct />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/orders"
+                                element={
+                                    <ProtectedRoute>
+                                        <Order />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route path="/search-results" element={<SearchResults />} />
+                        </Routes>
+                    </div>
+                </BrowserRouter>
+            </AppProvider>
+        </AuthProvider>
     );
 }
 
